@@ -1,0 +1,33 @@
+# Configuración sensible — NUNCA subir al repo
+Php/config.php
+
+# VS Code SFTP (contiene contraseñas FTP)
+.vscode/sftp.json
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+error_log
+
+# Temporales
+*.tmp
+*.bak
+*.swp
+
+# Node (si se usa en el futuro)
+node_modules/
+
+# Videos y medios pesados (subirlos directamente al servidor)
+Videos/
+*.mp4
+*.mov
+*.avi
+*.webm
+
+# Imágenes grandes
+Experience/img/*.png
+Experience/img/*.jpg

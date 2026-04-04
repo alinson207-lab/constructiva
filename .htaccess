@@ -1,0 +1,30 @@
+Options -Indexes
+Options +FollowSymLinks
+
+RewriteEngine On
+RewriteBase /
+
+# ── Archivos y carpetas físicas → se sirven directamente (PRIMERO)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── Cursos
+RewriteRule ^cursos/revit/?$            Revit.php               [L,QSA]
+RewriteRule ^cursos/ms-project/?$       Msproject.php           [L,QSA]
+RewriteRule ^cursos/ia/?$               Inteligenciaartificial.php [L,QSA]
+RewriteRule ^cursos/marca/?$            Marca_personal.php      [L,QSA]
+RewriteRule ^cursos/neuro/?$            Neuro_comunicacion.php  [L,QSA]
+
+# ── Páginas
+RewriteRule ^login/?$                   loginhome.php           [L,QSA]
+RewriteRule ^registro/?$                register.php            [L,QSA]
+RewriteRule ^perfil/?$                  perfil.php              [L,QSA]
+RewriteRule ^dashboard/?$               Homestudent.php         [L,QSA]
+RewriteRule ^admin/?$                   Admin.php               [L,QSA]
+RewriteRule ^charla/?$                  charla.php              [L,QSA]
+RewriteRule ^lecciones/?$               Lecciones.html          [L,QSA]
+RewriteRule ^programa-completo/?$       Programa-completo.php   [L,QSA]
+RewriteRule ^bonus/?$                   bonus.php               [L,QSA]
+RewriteRule ^calendario/?$              Calendario.php          [L,QSA,NC]
+RewriteRule ^live/?$                    live.php                [L,QSA,NC]

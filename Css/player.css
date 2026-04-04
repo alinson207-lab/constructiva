@@ -1,0 +1,400 @@
+/* =================================
+   Css/player.css
+   Reproductores de video — Constructiva
+   ================================= */
+
+
+/* ── VARIABLES (hereda de index.css) ── */
+/* --teal-deep / --teal-mid / --teal-vivid / --teal-bright
+   --mint / --mint-light / --border / --text-muted          */
+
+
+/* =================================
+   1. CARD-TOP · Hero Mockup Player
+   Formato: 9 / 16  (Stories / Instagram)
+   ================================= */
+
+.card-top {
+  aspect-ratio: 9 / 16;        /* formato Stories / Instagram */
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--teal-mid); /* fallback mientras carga */
+  display: block;
+}
+
+/* Video fill — absolute para no empujar el card-body */
+.card-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity .3s ease;
+}
+
+/* Overlay degradado inferior para legibilidad de controles */
+.card-top::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(7, 30, 30, .6) 0%,
+    transparent 40%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+/* ── CONTROLES DEL HERO PLAYER ── */
+
+.card-controls {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+/* Botón base — play/pause y sound comparten este estilo.
+   También cubre .card-sound-btn para retrocompatibilidad. */
+.ctrl-btn,
+.card-sound-btn {
+  width: 38px;
+  height: 38px;
+
+  background: rgba(7, 30, 30, .6);
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background .2s ease, transform .18s ease, border-color .2s;
+}
+
+.ctrl-btn:hover,
+.card-sound-btn:hover {
+  background: rgba(16, 176, 158, .5);
+  border-color: var(--mint);
+  transform: scale(1.1);
+}
+
+.ctrl-btn svg,
+.card-sound-btn svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Estado: video pausado → icono play visible, pause oculto */
+.icon-pause { display: none; }
+.icon-play  { display: block; }
+
+/* Estado activo aplicado por JS */
+.ctrl-btn.playing .icon-play  { display: none; }
+.ctrl-btn.playing .icon-pause { display: block; }
+
+/* Sonido */
+.icon-sound  { display: none; }
+.icon-muted  { display: block; }
+
+.ctrl-btn.unmuted .icon-muted { display: none; }
+.ctrl-btn.unmuted .icon-sound { display: block; }
+
+
+/* Barra de progreso mini */
+.card-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, .15);
+  z-index: 3;
+  cursor: pointer;
+}
+
+.card-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, var(--teal-bright), var(--mint-light));
+  transition: width .25s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+
+/* ── AJUSTE DEL HERO-VISUAL PARA FORMATO IG ── */
+/* El card-mockup se achica para que quepa en pantalla
+   manteniendo la proporción Stories sin cortar nada    */
+
+.hero-visual .course-card-mockup {
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+
+/* =================================
+   2. PLAYER FULL · Página de lección
+   ================================= */
+
+.player-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 16px;
+  overflow: hidden;
+
+  box-shadow: 0 32px 64px rgba(0, 0, 0, .5),
+              0 0 0 1px var(--border);
+}
+
+.player-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Overlay de controles: oculto por defecto, visible en hover */
+.player-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(7, 30, 30, .85) 0%,
+    rgba(7, 30, 30, .25) 40%,
+    transparent 70%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem 1.2rem;
+  opacity: 0;
+  transition: opacity .25s ease;
+  z-index: 2;
+}
+
+.player-wrap:hover .player-overlay,
+.player-wrap.paused  .player-overlay {
+  opacity: 1;
+}
+
+/* Botón play central */
+.player-play-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(.9);
+  width: 72px;
+  height: 72px;
+
+  background: rgba(16, 176, 158, .2);
+  border: 2px solid rgba(93, 230, 212, .5);
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background .2s, transform .2s, opacity .2s;
+  opacity: 0;
+  z-index: 3;
+}
+
+.player-play-center svg { margin-left: 4px; }
+
+.player-wrap.paused .player-play-center {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.player-play-center:hover {
+  background: rgba(16, 176, 158, .45);
+  border-color: var(--mint-light);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+
+/* ── BARRA DE PROGRESO FULL PLAYER ── */
+
+.player-progress {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, .15);
+  border-radius: 100px;
+  cursor: pointer;
+  margin-bottom: .75rem;
+  position: relative;
+  overflow: hidden;
+  transition: height .15s ease;
+}
+
+.player-wrap:hover .player-progress { height: 6px; }
+
+.player-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, var(--teal-bright), var(--mint-light));
+  border-radius: 100px;
+  pointer-events: none;
+  transition: width .1s linear;
+}
+
+
+/* ── BARRA INFERIOR DE CONTROLES ── */
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.player-btn {
+  width: 36px;
+  height: 36px;
+
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  cursor: pointer;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+
+.player-btn:hover {
+  background: rgba(93, 230, 212, .12);
+  border-color: var(--mint);
+  transform: scale(1.08);
+}
+
+.player-btn svg { display: block; }
+
+.player-btn .icon-pause { display: none; }
+.player-btn .icon-play  { display: block; }
+
+.player-btn.playing .icon-play  { display: none; }
+.player-btn.playing .icon-pause { display: block; }
+
+.player-btn .icon-sound  { display: none; }
+.player-btn .icon-muted  { display: block; }
+
+.player-btn.unmuted .icon-muted { display: none; }
+.player-btn.unmuted .icon-sound { display: block; }
+
+
+/* Slider de volumen */
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 72px;
+  height: 4px;
+  background: rgba(255, 255, 255, .18);
+  border-radius: 100px;
+  outline: none;
+  cursor: pointer;
+  transition: width .2s;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--mint-light);
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(93, 230, 212, .5);
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--mint-light);
+  border: none;
+  cursor: pointer;
+}
+
+
+/* Tiempo */
+.player-time {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: .75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .6);
+  letter-spacing: .04em;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.player-btn.btn-fullscreen { margin-left: .2rem; }
+
+
+/* =================================
+   3. RESPONSIVE
+   ================================= */
+
+@media (max-width: 1200px) {
+
+  .hero-visual .course-card-mockup {
+    max-width: 240px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .hero-visual .course-card-mockup {
+    max-width: 100%;
+  }
+
+  .player-wrap {
+    border-radius: 10px;
+  }
+
+  .volume-slider {
+    width: 50px;
+  }
+
+  .player-play-center {
+    width: 56px;
+    height: 56px;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .volume-slider {
+    display: none;
+  }
+
+  .player-play-center {
+    width: 48px;
+    height: 48px;
+  }
+
+  .ctrl-btn,
+  .card-sound-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+}

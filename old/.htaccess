@@ -1,0 +1,26 @@
+Options -Indexes
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Páginas principales
+RewriteRule ^login$              loginhome.php [L]
+RewriteRule ^registro$           register.php [L]
+RewriteRule ^dashboard$          Homestudent.php [L]
+RewriteRule ^perfil$             perfil.php [L]
+RewriteRule ^admin$              Admin.php [L]
+RewriteRule ^charla$             charla.php [L]
+RewriteRule ^charla/admin$       Charla-admin.php [L]
+RewriteRule ^charla/estudiante$  Charla-estudiante.php [L]
+RewriteRule ^lecciones$          Lecciones.php [L]
+RewriteRule ^programa$           Programa-completo.php [L]
+RewriteRule ^bonus$              bonus.php [L]
+
+# Cursos
+RewriteRule ^cursos/revit$       Revit.php [L]
+RewriteRule ^cursos/ms-project$  Msproject.php [L]
+RewriteRule ^cursos/ia$          Inteligenciaartificial.php [L]
+RewriteRule ^cursos/marca$       Marca_personal.php [L]
+RewriteRule ^cursos/neuro$       Neuro_comunicacion.php [L]

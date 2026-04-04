@@ -1,0 +1,91 @@
+/* video-player.css — Constructiva Experience */
+
+[data-player] {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Barra de controles ── */
+.card-controls-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(to top, rgba(0, 0, 0, .75) 0%, transparent 100%);
+  z-index: 10;
+}
+
+/* ── Botones circulares ── */
+.ctrl-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, .25);
+  background: rgba(255, 255, 255, .1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+
+.ctrl-btn:hover {
+  background: rgba(93, 230, 212, .25);
+  border-color: rgba(93, 230, 212, .6);
+  transform: scale(1.08);
+}
+
+.ctrl-btn:active {
+  transform: scale(.95);
+}
+
+/* Estados play/pause */
+.ctrl-btn .icon-pause       { display: none; }
+.ctrl-btn.playing .icon-play  { display: none; }
+.ctrl-btn.playing .icon-pause { display: block; }
+
+/* Estados muted/sound */
+.ctrl-btn .icon-sound         { display: none; }
+.ctrl-btn.active .icon-muted  { display: none; }
+.ctrl-btn.active .icon-sound  { display: block; }
+
+/* ── Barra de progreso ── */
+.card-progress-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, .2);
+  border-radius: 99px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: height .2s;
+}
+
+.card-controls-bar:hover .card-progress-bar {
+  height: 5px;
+}
+
+.card-progress-fill {
+  height: 100%;
+  width: 0;
+  background: #5de6d4;
+  border-radius: 99px;
+  transition: width .3s linear;
+}
+
+/* ── Timer ── */
+.ctrl-time {
+  font-size: .68rem;
+  font-family: 'DM Sans', sans-serif;
+  color: rgba(255, 255, 255, .7);
+  letter-spacing: .03em;
+  flex-shrink: 0;
+  min-width: 28px;
+  text-align: right;
+}

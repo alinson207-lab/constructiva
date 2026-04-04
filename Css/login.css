@@ -1,0 +1,280 @@
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('fonts/SFPRODISPLAYREGULAR.OTF') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('fonts/SFPRODISPLAYMEDIUM.OTF') format('opentype');
+  font-weight: 500 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('fonts/SFPRODISPLAYBOLD.OTF') format('opentype');
+  font-weight: 700 900;
+  font-style: normal;
+}
+
+/* CURSOR NORMAL */
+
+body{
+cursor:default;
+}
+
+
+/* BODY */
+
+.login-body{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+
+background:
+radial-gradient(circle at 30% 20%, rgba(16,176,158,.15), transparent 40%),
+radial-gradient(circle at 80% 80%, rgba(93,230,212,.2), transparent 40%),
+var(--teal-deep);
+
+font-family:'SF Pro Display', -apple-system, sans-serif;
+}
+
+
+/* CONTENEDOR */
+
+.login-container{
+width:100%;
+display:flex;
+justify-content:center;
+padding:2rem;
+}
+
+
+/* CARD */
+
+.login-card{
+
+width:380px;
+
+background:rgba(255,255,255,.06);
+backdrop-filter:blur(18px);
+
+border:1px solid var(--border);
+border-radius:18px;
+
+padding:2.5rem;
+
+box-shadow:0 30px 60px rgba(0,0,0,.35);
+}
+
+
+/* HEADER */
+
+.login-header{
+text-align:center;
+margin-bottom:2rem;
+}
+
+.login-header h1{
+
+font-family:'SF Pro Display', -apple-system, sans-serif;
+font-weight:800;
+color:white;
+font-size:1.8rem;
+}
+
+.login-header span{
+color:var(--mint);
+}
+
+.login-header p{
+color:var(--text-muted);
+font-size:.9rem;
+}
+
+
+/* INPUT GROUP */
+
+.input-group{
+display:flex;
+flex-direction:column;
+margin-bottom:1.4rem;
+}
+
+.input-group label{
+font-size:.8rem;
+color:var(--mint-light);
+margin-bottom:.3rem;
+}
+
+
+/* INPUT WRAPPER */
+
+.input-wrapper{
+display:flex;
+align-items:center;
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.15);
+border-radius:10px;
+padding:.6rem .8rem;
+gap:.6rem;
+transition:all .2s;
+}
+
+.input-wrapper:focus-within{
+border-color:var(--mint);
+box-shadow:0 0 0 2px rgba(16,176,158,.2);
+}
+
+
+/* ICONOS */
+
+.input-wrapper svg{
+width:16px;
+height:16px;
+fill:#7ab8b2;
+flex-shrink:0;
+}
+
+
+/* INPUT */
+
+.input-wrapper input{
+border:none;
+background:transparent;
+color:white;
+width:100%;
+outline:none;
+font-size:.9rem;
+}
+
+
+/* BOTON PRINCIPAL */
+
+.btn-login{
+
+width:100%;
+margin-top:1.2rem;
+
+background:linear-gradient(135deg,#10b09e,#18b0a0);
+
+border:none;
+border-radius:40px;
+
+padding:.9rem;
+
+font-family:'SF Pro Display', -apple-system, sans-serif;
+font-weight:700;
+font-size:.95rem;
+
+color:#072b2b;
+
+cursor:pointer;
+
+box-shadow:
+0 8px 18px rgba(16,176,158,.35),
+0 2px 0 rgba(0,0,0,.4);
+
+transition:all .25s;
+}
+
+.btn-login:hover{
+
+transform:translateY(-2px);
+
+box-shadow:
+0 14px 30px rgba(16,176,158,.45),
+0 2px 0 rgba(0,0,0,.4);
+
+background:linear-gradient(135deg,#5de6d4,#18b0a0);
+
+}
+
+
+/* DIVIDER */
+
+.divider{
+
+display:flex;
+align-items:center;
+margin:1.6rem 0;
+gap:1rem;
+color:#7ab8b2;
+font-size:.8rem;
+}
+
+.divider::before,
+.divider::after{
+
+content:"";
+flex:1;
+height:1px;
+background:rgba(255,255,255,.12);
+
+}
+
+
+/* BOTON GOOGLE */
+
+.google-btn{
+
+width:100%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+gap:.6rem;
+
+background:white;
+color:#444;
+
+border:none;
+border-radius:12px;
+
+padding:.75rem;
+
+font-weight:600;
+font-size:.9rem;
+
+cursor:pointer;
+
+transition:all .2s;
+
+}
+
+.google-btn img{
+width:18px;
+}
+
+.google-btn:hover{
+
+transform:translateY(-1px);
+
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+}
+
+
+/* FOOTER */
+
+.login-footer{
+
+text-align:center;
+margin-top:1.5rem;
+
+font-size:.85rem;
+color:var(--text-muted);
+}
+
+.login-footer a{
+
+color:var(--mint);
+text-decoration:none;
+font-weight:600;
+}
+
+.login-footer a:hover{
+text-decoration:underline;
+}
