@@ -151,7 +151,12 @@ $userData = json_encode([
     'ciudad'       => $usuario['ciudad']       ?? '',
 ]);
 
-$destino = ($usuario['rol'] === 'admin') ? '/Admin.php' : '/';
+$rol = strtolower(trim($usuario['rol'] ?? 'estudiante'));
+$destino = match($rol) {
+    'admin'      => '/Admin.php',
+    'instructor' => '/Instructor.php',
+    default      => '/dashboard',
+};
 ?>
 <!DOCTYPE html>
 <html lang="es">
