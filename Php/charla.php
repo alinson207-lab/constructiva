@@ -187,7 +187,11 @@ if ($method === 'POST') {
         jsonError(400, 'Datos requeridos faltantes');
     }
 
-    $estado = calcularEstado($fechaSesion, $duracion);
+    // Una sesión nueva nunca debe quedar "finalizada" al crearse
+    // (protección ante desfases de timezone)
+    $estadoCalc = calcularEstado($fechaSesion, $duracion);
+    $estado = ($estadoCalc === 'finalizada') ? 'programada' : $estadoCalc;
+
 
     $conexion->prepare("
         INSERT INTO charlas
