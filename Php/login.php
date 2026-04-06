@@ -70,18 +70,8 @@ $userData = json_encode([
     'ciudad'       => $usuario['ciudad']       ?? '',
 ]);
 
-// ✅ Redirigir según rol (normalizado a minúsculas)
-$rol = strtolower(trim($usuario['rol']));
-switch ($rol) {
-    case 'admin':
-        $destino = '/admin';
-        break;
-    case 'instructor':
-        $destino = '/instructor';
-        break;
-    default:
-        $destino = '/dashboard';
-}
+// Todos los roles van al index con la sesión activa
+$destino = '/';
 ?>
 <!DOCTYPE html>
 <html lang="es">

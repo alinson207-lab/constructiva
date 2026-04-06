@@ -320,7 +320,7 @@
       <p>Únete al programa Constructiva Experience. 5 workshops intensivos, +14 horas prácticas, certificado digital y físico. Descuentos de Fundador y Estudiantil disponibles.</p>
     </div>
     <div class="cta-actions">
-      <a href="/register.php" class="btn-primary">Inscribirme ahora <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a href="/registro" class="btn-primary">Inscribirme ahora <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       <span class="cta-note">23 MAR – 22 ABR · Cupos limitados</span>
     </div>
   </div>

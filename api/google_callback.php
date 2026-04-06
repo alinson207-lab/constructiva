@@ -160,12 +160,8 @@ $userData = json_encode([
     'ciudad'       => $usuario['ciudad']       ?? '',
 ]);
 
-$rol = strtolower(trim($usuario['rol'] ?? 'estudiante'));
-$destino = match($rol) {
-    'admin'      => '/admin',
-    'instructor' => '/instructor',
-    default      => '/dashboard',
-};
+// Todos los roles van al index con la sesión activa
+$destino = '/';
 ?>
 <!DOCTYPE html>
 <html lang="es">
