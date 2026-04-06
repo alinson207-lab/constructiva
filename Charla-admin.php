@@ -218,6 +218,23 @@
       .stats-bar { flex-wrap:wrap; }
       .hms-iframe-wrap { height:380px; }
     }
+    @media(max-width:600px) {
+      .topnav { padding:0 1rem; height:52px; }
+      .topnav-right { gap:.5rem; }
+      .nav-label { display:none; }
+      .left-col,.sidebar { padding:1.1rem; }
+      .section-head { flex-direction:column; align-items:flex-start; gap:.6rem; }
+      .sess-card { padding:1rem 1.1rem; }
+      .actions-bar { flex-wrap:wrap; gap:.4rem; }
+      .hms-iframe-wrap { height:300px; }
+      .form-grid { grid-template-columns:1fr !important; }
+      .card-form-inner { padding:1.1rem; }
+      .stats-bar .stat-item { flex:1 1 40%; }
+    }
+    @media(max-width:400px) {
+      .back-btn span { display:none; }
+      .back-btn { padding:.3rem .5rem; }
+    }
   </style>
 </head>
 <body>

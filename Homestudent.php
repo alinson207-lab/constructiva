@@ -306,25 +306,50 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
   .grid-dash{grid-template-columns:1fr}
 }
 @media(max-width:700px){
-  .sidebar{transform:translateX(-100%)}
+  .sidebar{
+    transform:translateX(-100%);
+    z-index:9999;
+    box-shadow:4px 0 24px rgba(0,0,0,.35);
+  }
   .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{
+    display:none;position:fixed;inset:0;
+    background:rgba(0,0,0,.5);z-index:9998;
+    backdrop-filter:blur(2px);
+  }
+  .sidebar-overlay.show{display:block}
   .main{margin-left:0}
-  .topbar-hamburger{display:flex}
+  .topbar{padding:0 1rem}
+  .topbar-hamburger{
+    display:flex;align-items:center;justify-content:center;
+    width:40px;height:40px;border-radius:10px;
+    background:rgba(10,171,150,.08);border:1px solid rgba(10,171,150,.15);
+    color:var(--text);
+  }
+  .topbar-hamburger:hover{background:rgba(10,171,150,.15)}
   .grid-4{grid-template-columns:1fr 1fr}
   .grid-2{grid-template-columns:1fr}
   .grid-3{grid-template-columns:1fr}
-  .content{padding:1.4rem 1rem 4rem}
-  .welcome-banner{padding:1.4rem 1.4rem}
+  .content{padding:1.2rem .9rem 4rem}
+  .welcome-banner{padding:1.3rem 1.2rem}
   .wb-icon{display:none}
+  .card{padding:1.1rem 1.1rem}
+  .data-table{font-size:.75rem}
+  .data-table th,.data-table td{padding:.6rem .7rem}
 }
 @media(max-width:480px){
   .grid-4{grid-template-columns:1fr}
+  .topbar-breadcrumb{display:none}
+  .stat-card{padding:.9rem 1rem}
+  .stat-num{font-size:1.35rem}
+  .page-title{font-size:1.4rem}
 }
 </style>
 </head>
 <body>
 
 <div id="toast"></div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- ═══════ SIDEBAR ═══════ -->
 <aside class="sidebar" id="sidebar">
@@ -1098,7 +1123,12 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+function toggleSidebar(){
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  if (ov) ov.classList.toggle('show', sb.classList.contains('open'));
+}
 
 function revealAll(container) {
   const items = container.querySelectorAll('.reveal:not(.visible)');

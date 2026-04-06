@@ -114,12 +114,33 @@ body{font-family:'DM Sans',sans-serif;background:#fff;color:var(--text);min-heig
 .empty-icon{font-size:2rem;margin-bottom:.6rem}
 .empty-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:.3rem}
 
-@media(max-width:700px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.topbar-burger{display:flex}.grid-3{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .sidebar{transform:translateX(-100%);z-index:9999;box-shadow:4px 0 24px rgba(0,0,0,.4)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;backdrop-filter:blur(2px)}
+  .sidebar-overlay.show{display:block}
+  .main{margin-left:0}
+  .topbar{padding:0 1rem}
+  .topbar-burger{
+    display:flex;align-items:center;justify-content:center;
+    width:40px;height:40px;border-radius:10px;
+    background:rgba(93,230,212,.08);border:1px solid rgba(93,230,212,.18);
+  }
+  .topbar-burger:hover{background:rgba(93,230,212,.15)}
+  .grid-3{grid-template-columns:1fr}
+  .grid-2{grid-template-columns:1fr}
+  .content{padding:1.2rem .9rem 4rem}
+}
+@media(max-width:480px){
+  .topbar-breadcrumb{display:none}
+  .page-title{font-size:1.35rem}
+}
 </style>
 </head>
 <body>
 
 <div id="toast"></div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
@@ -275,7 +296,12 @@ document.querySelectorAll('.nav-item[data-section]').forEach(n => {
   n.addEventListener('click', () => navigate(n.dataset.section));
 });
 
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  if (ov) ov.classList.toggle('show', sb.classList.contains('open'));
+}
 
 // ══════════════════════════════════════════════
 //  CARGAR PERFIL DEL INSTRUCTOR
