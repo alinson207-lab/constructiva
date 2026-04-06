@@ -2,15 +2,20 @@
 // ============================================================
 //  CONSTRUCTIVA · Callback de Google OAuth
 // ============================================================
-require_once __DIR__ . '/../Php/conexion_bd.php'; // incluye config.php
 
-
+// ⚠️  session_start() DEBE ir PRIMERO, antes de cualquier require que
+//     pueda generar output o headers.
 session_start();
+
+require_once __DIR__ . '/../Php/conexion_bd.php'; // incluye config.php
 
 // ── VALIDAR STATE anti-CSRF ───────────────────────────────────
 $state = $_GET['state'] ?? '';
-if (!$state || $state !== ($_SESSION['oauth_state'] ?? '')) {
-    die('<script>alert("Error de seguridad OAuth"); window.location="/loginhome.php";</script>');
+$sessionState = $_SESSION['oauth_state'] ?? '';
+
+if (!$state || $state !== $sessionState) {
+    error_log('[Google OAuth] State mismatch. GET state=' . $state . ' SESSION state=' . $sessionState);
+    die('<script>alert("Error de seguridad OAuth (state mismatch)"); window.location="/loginhome.php";</script>');
 }
 unset($_SESSION['oauth_state']);
 
@@ -125,11 +130,14 @@ $conexion->prepare("
 ")->execute([$usuario['id'], $token, $ip, $userAgent, $expira_en]);
 
 $cookieTTL = time() + ($days * 24 * 60 * 60);
+$isHttps   = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+             || ($_SERVER['SERVER_PORT'] ?? 80) == 443;
 
 setcookie('cv_token', $token, [
     'expires'  => $cookieTTL,
     'path'     => '/',
     'httponly' => true,
+    'secure'   => $isHttps,
     'samesite' => 'Lax',
 ]);
 
@@ -137,6 +145,7 @@ setcookie('cv_token_js', $token, [
     'expires'  => $cookieTTL,
     'path'     => '/',
     'httponly' => false,
+    'secure'   => $isHttps,
     'samesite' => 'Lax',
 ]);
 
