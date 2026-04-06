@@ -44,22 +44,28 @@ $stmt = $conexion->prepare("
 $stmt->execute([$usuario['id'], $token, $ip, $userAgent, $expira_en]);
 
 $cookieTTL = time() + (2 * 60 * 60);
+$isHttps   = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+             || ($_SERVER['SERVER_PORT'] ?? 80) == 443;
 
+/* Cookie HttpOnly para el backend */
 setcookie('cv_token', $token, [
     'expires'  => $cookieTTL,
     'path'     => '/',
     'httponly' => true,
+    'secure'   => $isHttps,
     'samesite' => 'Lax',
 ]);
 
+/* Cookie legible por JS para el frontend */
 setcookie('cv_token_js', $token, [
     'expires'  => $cookieTTL,
     'path'     => '/',
     'httponly' => false,
+    'secure'   => $isHttps,
     'samesite' => 'Lax',
 ]);
 
-$userData = json_encode([
+$userData = [
     'id'           => $usuario['id'],
     'nombre'       => $usuario['nombre'],
     'apellido'     => $usuario['apellido'],
@@ -68,9 +74,18 @@ $userData = json_encode([
     'avatar_emoji' => $usuario['avatar_emoji'] ?? '👤',
     'profesion'    => $usuario['profesion']    ?? '',
     'ciudad'       => $usuario['ciudad']       ?? '',
+];
+
+/* Cookie con datos del usuario legible por JS (no sensible) */
+setcookie('cv_user_data', json_encode($userData), [
+    'expires'  => $cookieTTL,
+    'path'     => '/',
+    'httponly' => false,
+    'secure'   => $isHttps,
+    'samesite' => 'Lax',
 ]);
 
-// Todos los roles van al index con la sesión activa
+$userDataJson = json_encode($userData);
 $destino = '/';
 ?>
 <!DOCTYPE html>
@@ -79,18 +94,16 @@ $destino = '/';
 <body>
 <script>
   try {
-    const token   = <?= json_encode($token) ?>;
-    const user    = <?= $userData ?>;
-    const destino = <?= json_encode($destino) ?>;
+    const token = <?= json_encode($token) ?>;
+    const user  = <?= $userDataJson ?>;
 
     localStorage.setItem('cv_token', token);
     localStorage.setItem('cv_user',  JSON.stringify(user));
     localStorage.setItem('cv_last_activity', Date.now().toString());
 
-    window.location.replace(destino);
-
+    window.location.replace('<?= $destino ?>');
   } catch(e) {
-    window.location.replace(destino);
+    window.location.replace('<?= $destino ?>');
   }
 </script>
 <noscript>

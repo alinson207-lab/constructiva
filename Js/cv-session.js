@@ -46,7 +46,18 @@
   }
 
   function getUser() {
-    try { return JSON.parse(localStorage.getItem(USER_KEY)); } catch { return null; }
+    try {
+      const ls = localStorage.getItem(USER_KEY);
+      if (ls) return JSON.parse(ls);
+      // Fallback: leer cookie cv_user_data si localStorage no tiene nada
+      const m = document.cookie.match(/(?:^|;\s*)cv_user_data=([^;]+)/);
+      if (m) {
+        const u = JSON.parse(decodeURIComponent(m[1]));
+        localStorage.setItem(USER_KEY, JSON.stringify(u));
+        return u;
+      }
+      return null;
+    } catch { return null; }
   }
 
   function clearSession() {
@@ -54,6 +65,7 @@
     localStorage.removeItem(USER_KEY);
     document.cookie = 'cv_token=; path=/; max-age=0';
     document.cookie = 'cv_token_js=; path=/; max-age=0';
+    document.cookie = 'cv_user_data=; path=/; max-age=0';
   }
 
   /* ─── Auth ───────────────────────────────────────────────── */
@@ -258,9 +270,21 @@
   /* ─── Auto-sincronización al cargar ─────────────────────── */
 
   document.addEventListener('DOMContentLoaded', () => {
-    const m = document.cookie.match(/(?:^|;\s*)cv_token_js=([^;]+)/);
-    if (m && !localStorage.getItem(TOKEN_KEY)) {
-      localStorage.setItem(TOKEN_KEY, m[1]);
+    // Sincronizar token desde cookie si no está en localStorage
+    const mToken = document.cookie.match(/(?:^|;\s*)cv_token_js=([^;]+)/);
+    if (mToken && !localStorage.getItem(TOKEN_KEY)) {
+      localStorage.setItem(TOKEN_KEY, mToken[1]);
+    }
+    // Sincronizar user desde cookie si no está en localStorage
+    const mUser = document.cookie.match(/(?:^|;\s*)cv_user_data=([^;]+)/);
+    if (mUser && !localStorage.getItem(USER_KEY)) {
+      try {
+        const u = JSON.parse(decodeURIComponent(mUser[1]));
+        localStorage.setItem(USER_KEY, JSON.stringify(u));
+      } catch(_) {}
+    }
+    // Si hay token pero no user, buscar perfil en el backend
+    if (localStorage.getItem(TOKEN_KEY) && !localStorage.getItem(USER_KEY)) {
       fetchProfile();
     }
     initActivityWatcher();
