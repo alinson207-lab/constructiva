@@ -21,8 +21,8 @@
   const API_BASE     = '/Php';
   const TOKEN_KEY    = 'cv_token';
   const USER_KEY     = 'cv_user';
-  const LOGIN_PAGE   = '/loginhome.php';
-  const HOME_STUDENT = '/Homestudent.php';
+  const LOGIN_PAGE   = '/login';
+  const HOME_STUDENT = '/dashboard';
 
   /* ─── Storage ────────────────────────────────────────────── */
 

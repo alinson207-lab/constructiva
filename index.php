@@ -79,7 +79,7 @@
             <a href="/perfil" class="nu-item">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Mi Perfil
             </a>
-            <a href="/dashboard" class="nu-item">
+            <a href="/dashboard" class="nu-item" id="nu-panel-link">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Mi Espacio
             </a>
             <div class="nu-divider"></div>
@@ -384,14 +384,32 @@
   var timerInterval = setInterval(tick, 1000);
 })();
 
-document.addEventListener('DOMContentLoaded', function () {
-  const user = CVSession.getUser();
-  if (user) {
-    document.getElementById('nav-login-btn').style.display     = 'none';
-    document.getElementById('nav-user-dropdown').style.display = 'block';
-    document.getElementById('nu-avatar').textContent = user.avatar_emoji || '\u{1F464}';
-    document.getElementById('nu-name').textContent   = user.nombre || 'Usuario';
+document.addEventListener('DOMContentLoaded', async function () {
+
+  // ── Intentar obtener usuario: primero localStorage, luego backend ──
+  let user = CVSession.getUser();
+
+  if (!user) {
+    // No hay caché local → intentar con el token (cookie o localStorage)
+    const token = CVSession.getToken();
+    if (token) {
+      user = await CVSession.fetchProfile();
+    }
   }
+
+  // ── Mostrar nav según estado de sesión ──────────────────────────
+  function applyNav(u) {
+    if (u) {
+      document.getElementById('nav-login-btn').style.display     = 'none';
+      document.getElementById('nav-user-dropdown').style.display = 'block';
+      document.getElementById('nu-avatar').textContent = u.avatar_emoji || '👤';
+      document.getElementById('nu-name').textContent   = u.nombre || 'Usuario';
+    }
+  }
+
+  applyNav(user);
+
+  // ── Dropdown toggle ─────────────────────────────────────────────
   const trigger = document.getElementById('nav-user-trigger');
   const menu    = document.getElementById('nu-menu');
   if (trigger && menu) {
@@ -405,6 +423,17 @@ document.addEventListener('DOMContentLoaded', function () {
       trigger.setAttribute('aria-expanded', 'false');
       menu.classList.remove('nu-menu--open');
     });
+  }
+
+  // ── Link "Mi Espacio" dinámico según rol ────────────────────────
+  if (user) {
+    const rol = (user.rol || '').toLowerCase();
+    const panelLink = document.getElementById('nu-panel-link');
+    if (panelLink) {
+      if (rol === 'admin')       panelLink.href = '/admin';
+      else if (rol === 'instructor') panelLink.href = '/instructor';
+      else                           panelLink.href = '/dashboard';
+    }
   }
 });
 </script>
