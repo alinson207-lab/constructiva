@@ -24,6 +24,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /home/u314398385/domains/constructiva.edu.do/public_html/
           local-dir: ./
+          dangerous-clean-slate: false
           exclude: |
             **/.git*
             **/.git*/**
@@ -31,4 +32,4 @@ jobs:
             **/.vscode/**
             .gitignore
             README.md
-          dangerous-clean-slate: false
+            **/old/**
