@@ -16,6 +16,44 @@ jobs:
         with:
           fetch-depth: 2  # necesario para detectar archivos modificados
 
+      - name: 🔐 Generar config.php desde Secrets
+        run: |
+          cat > Php/config.php << 'PHPEOF'
+          <?php
+          // ============================================================
+          //  CONSTRUCTIVA · Configuración Central (generado por CI/CD)
+          // ============================================================
+          date_default_timezone_set('America/Santo_Domingo');
+
+          define('DB_HOST',     '${{ secrets.DB_HOST }}');
+          define('DB_NAME',     '${{ secrets.DB_NAME }}');
+          define('DB_USER',     '${{ secrets.DB_USER }}');
+          define('DB_PASSWORD', '${{ secrets.DB_PASSWORD }}');
+
+          define('GOOGLE_CLIENT_ID',     '${{ secrets.GOOGLE_CLIENT_ID }}');
+          define('GOOGLE_CLIENT_SECRET', '${{ secrets.GOOGLE_CLIENT_SECRET }}');
+          define('GOOGLE_REDIRECT_URI',  'https://constructiva.edu.do/api/google_callback.php');
+
+          define('ZOOM_SDK_KEY',    '');
+          define('ZOOM_SDK_SECRET', '');
+
+          define('HMS_ACCESS_KEY',  '${{ secrets.HMS_ACCESS_KEY }}');
+          define('HMS_SECRET',      '${{ secrets.HMS_SECRET }}');
+          define('HMS_TEMPLATE_ID', '${{ secrets.HMS_TEMPLATE_ID }}');
+          define('HMS_SUBDOMAIN',   '${{ secrets.HMS_SUBDOMAIN }}');
+
+          define('SITE_URL', 'https://constructiva.edu.do');
+
+          define('SESSION_HOURS',       2);
+          define('SESSION_SLIDING_MIN', 10);
+          define('SESSION_GOOGLE_DAYS', 7);
+
+          define('CORS_ALLOWED_ORIGINS', [
+              'https://constructiva.edu.do',
+              'https://www.constructiva.edu.do',
+          ]);
+          PHPEOF
+
       - name: 📤 Upload a Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

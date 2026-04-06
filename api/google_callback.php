@@ -162,8 +162,8 @@ $userData = json_encode([
 
 $rol = strtolower(trim($usuario['rol'] ?? 'estudiante'));
 $destino = match($rol) {
-    'admin'      => '/Admin.php',
-    'instructor' => '/Instructor.php',
+    'admin'      => '/admin',
+    'instructor' => '/instructor',
     default      => '/dashboard',
 };
 ?>

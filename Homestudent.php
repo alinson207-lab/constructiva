@@ -748,8 +748,8 @@ async function loadPerfil() {
 
     // Guard de rol: redirigir si no es estudiante
     const rol = (d.rol || '').toLowerCase().trim();
-    if (rol === 'admin') { window.location.href = '/Admin.php'; return; }
-    if (rol === 'instructor') { window.location.href = '/Instructor.php'; return; }
+    if (rol === 'admin') { window.location.href = '/admin'; return; }
+    if (rol === 'instructor') { window.location.href = '/instructor'; return; }
 
     const fullName = `${d.nombre} ${d.apellido}`;
     document.getElementById('sb-name').textContent = fullName;

@@ -16,14 +16,22 @@ RewriteRule ^cursos/ia/?$               Inteligenciaartificial.php [L,QSA]
 RewriteRule ^cursos/marca/?$            Marca_personal.php      [L,QSA]
 RewriteRule ^cursos/neuro/?$            Neuro_comunicacion.php  [L,QSA]
 
-# ── Páginas
+# ── Páginas principales
 RewriteRule ^login/?$                   loginhome.php           [L,QSA]
+RewriteRule ^loginhome/?$               loginhome.php           [L,QSA]
 RewriteRule ^registro/?$                register.php            [L,QSA]
 RewriteRule ^perfil/?$                  perfil.php              [L,QSA]
 RewriteRule ^dashboard/?$               Homestudent.php         [L,QSA]
 RewriteRule ^admin/?$                   Admin.php               [L,QSA]
+RewriteRule ^instructor/?$              Instructor.php          [L,QSA]
+
+# ── Charlas / Sesiones
 RewriteRule ^charla/?$                  charla.php              [L,QSA]
-RewriteRule ^lecciones/?$               Lecciones.html          [L,QSA]
+RewriteRule ^charla-admin/?$            Charla-admin.php        [L,QSA]
+RewriteRule ^charla-estudiante/?$       Charla-estudiante.php   [L,QSA]
+
+# ── Contenido
+RewriteRule ^lecciones/?$               Lecciones.php           [L,QSA]
 RewriteRule ^programa-completo/?$       Programa-completo.php   [L,QSA]
 RewriteRule ^bonus/?$                   bonus.php               [L,QSA]
 RewriteRule ^calendario/?$              Calendario.php          [L,QSA,NC]

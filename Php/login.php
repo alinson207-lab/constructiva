@@ -5,12 +5,12 @@ $email    = trim($_POST['email']    ?? '');
 $password = trim($_POST['password'] ?? '');
 
 if (empty($email) || empty($password)) {
-    echo "<script>alert('Debe completar todos los campos'); window.location='/loginhome.php';</script>";
+    echo "<script>alert('Debe completar todos los campos'); window.location='/login';</script>";
     exit();
 }
 
 if (!$conexion) {
-    echo "<script>alert('Error de conexión a la base de datos'); window.location='/loginhome.php';</script>";
+    echo "<script>alert('Error de conexión a la base de datos'); window.location='/login';</script>";
     exit();
 }
 
@@ -19,12 +19,12 @@ $stmt->execute([$email]);
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$usuario) {
-    echo "<script>alert('No se encuentra el usuario'); window.location='/loginhome.php';</script>";
+    echo "<script>alert('No se encuentra el usuario'); window.location='/login';</script>";
     exit();
 }
 
 if (!password_verify($password, $usuario['password_hash'])) {
-    echo "<script>alert('Contraseña incorrecta'); window.location='/loginhome.php';</script>";
+    echo "<script>alert('Contraseña incorrecta'); window.location='/login';</script>";
     exit();
 }
 
@@ -74,10 +74,10 @@ $userData = json_encode([
 $rol = strtolower(trim($usuario['rol']));
 switch ($rol) {
     case 'admin':
-        $destino = '/Admin.php';
+        $destino = '/admin';
         break;
     case 'instructor':
-        $destino = '/Instructor.php';
+        $destino = '/instructor';
         break;
     default:
         $destino = '/dashboard';

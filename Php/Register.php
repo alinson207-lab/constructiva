@@ -9,27 +9,27 @@ $password = trim($_POST['password']         ?? '');
 $confirm  = trim($_POST['confirm_password'] ?? '');
 
 if ($nombre == "" || $apellido == "" || $email == "" || $password == "") {
-    echo "<script>alert('Debe completar todos los campos'); window.location='/register.php';</script>";
+    echo "<script>alert('Debe completar todos los campos'); window.location='/registro';</script>";
     exit();
 }
 
 if ($password != $confirm) {
-    echo "<script>alert('Las contraseñas no coinciden'); window.location='/register.php';</script>";
+    echo "<script>alert('Las contraseñas no coinciden'); window.location='/registro';</script>";
     exit();
 }
 
 if (strlen($password) < 8) {
-    echo "<script>alert('La contraseña debe tener al menos 8 caracteres'); window.location='/register.php';</script>";
+    echo "<script>alert('La contraseña debe tener al menos 8 caracteres'); window.location='/registro';</script>";
     exit();
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    echo "<script>alert('El formato del correo electrónico no es válido'); window.location='/register.php';</script>";
+    echo "<script>alert('El formato del correo electrónico no es válido'); window.location='/registro';</script>";
     exit();
 }
 
 if (!$conexion) {
-    echo "<script>alert('Error de conexión a la base de datos'); window.location='/register.php';</script>";
+    echo "<script>alert('Error de conexión a la base de datos'); window.location='/registro';</script>";
     exit();
 }
 
@@ -38,7 +38,7 @@ $stmt = $conexion->prepare("SELECT id FROM usuarios WHERE email = ?");
 $stmt->execute([$email]);
 
 if ($stmt->fetch()) {
-    echo "<script>alert('El correo ya está registrado'); window.location='/register.php';</script>";
+    echo "<script>alert('El correo ya está registrado'); window.location='/registro';</script>";
     exit();
 }
 
@@ -52,4 +52,4 @@ $stmt = $conexion->prepare("
 ");
 $stmt->execute([$nombre, $apellido, $email, $passwordHash]);
 
-echo "<script>alert('Cuenta creada correctamente'); window.location='/loginhome.php';</script>";
+echo "<script>alert('Cuenta creada correctamente'); window.location='/login';</script>";
