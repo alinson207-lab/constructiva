@@ -80,16 +80,31 @@ function actualizarEstado(int $id, string $fechaSesion, int $duracionMin): void 
 // ── GET: HISTORIAL ────────────────────────────────────────────
 if ($method === 'GET' && isset($_GET['historial'])) {
 
-    $stmt = $conexion->prepare("
-        SELECT id, titulo, sesion_numero, sesion_label,
-               plataforma, fecha_sesion, duracion_min,
-               estado, link_grabacion
-        FROM charlas
-        WHERE activo = 1 AND estado = 'finalizada'
-        ORDER BY fecha_sesion DESC
-        LIMIT 20
-    ");
-    $stmt->execute();
+    $cursoId = isset($_GET['curso_id']) ? (int)$_GET['curso_id'] : null;
+
+    if ($cursoId) {
+        $stmt = $conexion->prepare("
+            SELECT id, titulo, sesion_numero, sesion_label,
+                   plataforma, fecha_sesion, duracion_min,
+                   estado, link_grabacion
+            FROM charlas
+            WHERE activo = 1 AND estado = 'finalizada' AND curso_id = ?
+            ORDER BY fecha_sesion DESC
+            LIMIT 20
+        ");
+        $stmt->execute([$cursoId]);
+    } else {
+        $stmt = $conexion->prepare("
+            SELECT id, titulo, sesion_numero, sesion_label,
+                   plataforma, fecha_sesion, duracion_min,
+                   estado, link_grabacion
+            FROM charlas
+            WHERE activo = 1 AND estado = 'finalizada'
+            ORDER BY fecha_sesion DESC
+            LIMIT 20
+        ");
+        $stmt->execute();
+    }
 
     jsonOk(['sesiones' => $stmt->fetchAll()]);
 }
@@ -118,26 +133,46 @@ if ($method === 'GET' && $charlaId) {
 // ── GET: PRÓXIMA CHARLA ───────────────────────────────────────
 if ($method === 'GET') {
 
-    $stmt = $conexion->prepare("
-        SELECT ch.id, ch.titulo, ch.descripcion, ch.sesion_numero,
-               ch.sesion_label, ch.plataforma, ch.fecha_sesion,
-               ch.duracion_min, ch.estado, ch.link_grabacion,
-               CONCAT(u.nombre,' ',u.apellido) AS instructor_nombre,
-               u.avatar_emoji  AS instructor_emoji,
-               u.profesion     AS instructor_profesion
-        FROM charlas ch
-        LEFT JOIN usuarios u ON u.id = ch.creado_por
-        WHERE ch.activo = 1
-          AND ch.estado NOT IN ('cancelada','finalizada')
-        ORDER BY ch.fecha_sesion ASC
-        LIMIT 1
-    ");
-    $stmt->execute();
+    $cursoId = isset($_GET['curso_id']) ? (int)$_GET['curso_id'] : null;
+
+    if ($cursoId) {
+        $stmt = $conexion->prepare("
+            SELECT ch.id, ch.titulo, ch.descripcion, ch.sesion_numero,
+                   ch.sesion_label, ch.plataforma, ch.fecha_sesion,
+                   ch.duracion_min, ch.estado, ch.link_grabacion,
+                   CONCAT(u.nombre,' ',u.apellido) AS instructor_nombre,
+                   u.avatar_emoji  AS instructor_emoji,
+                   u.profesion     AS instructor_profesion
+            FROM charlas ch
+            LEFT JOIN usuarios u ON u.id = ch.creado_por
+            WHERE ch.activo = 1
+              AND ch.curso_id = ?
+              AND ch.estado NOT IN ('cancelada','finalizada')
+            ORDER BY ch.fecha_sesion ASC
+            LIMIT 1
+        ");
+        $stmt->execute([$cursoId]);
+    } else {
+        $stmt = $conexion->prepare("
+            SELECT ch.id, ch.titulo, ch.descripcion, ch.sesion_numero,
+                   ch.sesion_label, ch.plataforma, ch.fecha_sesion,
+                   ch.duracion_min, ch.estado, ch.link_grabacion,
+                   CONCAT(u.nombre,' ',u.apellido) AS instructor_nombre,
+                   u.avatar_emoji  AS instructor_emoji,
+                   u.profesion     AS instructor_profesion
+            FROM charlas ch
+            LEFT JOIN usuarios u ON u.id = ch.creado_por
+            WHERE ch.activo = 1
+              AND ch.estado NOT IN ('cancelada','finalizada')
+            ORDER BY ch.fecha_sesion ASC
+            LIMIT 1
+        ");
+        $stmt->execute();
+    }
 
     $proxima = $stmt->fetch();
 
     if ($proxima) {
-
         actualizarEstado($proxima['id'], $proxima['fecha_sesion'], $proxima['duracion_min']);
         $proxima['estado'] = calcularEstado($proxima['fecha_sesion'], $proxima['duracion_min']);
 
@@ -147,15 +182,27 @@ if ($method === 'GET') {
     }
 
     // Historial corto
-    $hist = $conexion->prepare("
-        SELECT id, titulo, sesion_numero, sesion_label,
-               fecha_sesion, duracion_min, link_grabacion, estado
-        FROM charlas
-        WHERE activo = 1 AND estado = 'finalizada'
-        ORDER BY fecha_sesion DESC
-        LIMIT 3
-    ");
-    $hist->execute();
+    if ($cursoId) {
+        $hist = $conexion->prepare("
+            SELECT id, titulo, sesion_numero, sesion_label,
+                   fecha_sesion, duracion_min, link_grabacion, estado
+            FROM charlas
+            WHERE activo = 1 AND estado = 'finalizada' AND curso_id = ?
+            ORDER BY fecha_sesion DESC
+            LIMIT 3
+        ");
+        $hist->execute([$cursoId]);
+    } else {
+        $hist = $conexion->prepare("
+            SELECT id, titulo, sesion_numero, sesion_label,
+                   fecha_sesion, duracion_min, link_grabacion, estado
+            FROM charlas
+            WHERE activo = 1 AND estado = 'finalizada'
+            ORDER BY fecha_sesion DESC
+            LIMIT 3
+        ");
+        $hist->execute();
+    }
 
     jsonOk([
         'proxima'   => $proxima,
@@ -180,6 +227,7 @@ if ($method === 'POST') {
     $duracion    = (int)($body['duracion_min'] ?? 90);
     $sesionNum   = (int)($body['sesion_numero'] ?? 1);
     $sesionLabel = trim($body['sesion_label'] ?? '');
+    $cursoId     = isset($body['curso_id']) ? (int)$body['curso_id'] : null;
 
     // El link solo es obligatorio si la plataforma NO es 100ms
     $linkObligatorio = ($plataforma !== '100ms');
@@ -188,23 +236,40 @@ if ($method === 'POST') {
     }
 
     // Una sesión nueva nunca debe quedar "finalizada" al crearse
-    // (protección ante desfases de timezone)
     $estadoCalc = calcularEstado($fechaSesion, $duracion);
     $estado = ($estadoCalc === 'finalizada') ? 'programada' : $estadoCalc;
 
+    // Verificar si la columna curso_id existe para compatibilidad
+    $colCheck = $conexion->query("SHOW COLUMNS FROM charlas LIKE 'curso_id'");
+    $tieneCursoId = $colCheck->rowCount() > 0;
 
-    $conexion->prepare("
-        INSERT INTO charlas
-        (titulo, descripcion, plataforma, link_reunion,
-         sesion_numero, sesion_label, fecha_sesion, duracion_min,
-         estado, creado_por, activo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-    ")->execute([
-        $titulo, $descripcion, $plataforma, $link,
-        $sesionNum, $sesionLabel ?: null,
-        $fechaSesion, $duracion,
-        $estado, $user['id']
-    ]);
+    if ($tieneCursoId && $cursoId) {
+        $conexion->prepare("
+            INSERT INTO charlas
+            (titulo, descripcion, plataforma, link_reunion,
+             sesion_numero, sesion_label, fecha_sesion, duracion_min,
+             estado, creado_por, curso_id, activo)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+        ")->execute([
+            $titulo, $descripcion, $plataforma, $link,
+            $sesionNum, $sesionLabel ?: null,
+            $fechaSesion, $duracion,
+            $estado, $user['id'], $cursoId
+        ]);
+    } else {
+        $conexion->prepare("
+            INSERT INTO charlas
+            (titulo, descripcion, plataforma, link_reunion,
+             sesion_numero, sesion_label, fecha_sesion, duracion_min,
+             estado, creado_por, activo)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+        ")->execute([
+            $titulo, $descripcion, $plataforma, $link,
+            $sesionNum, $sesionLabel ?: null,
+            $fechaSesion, $duracion,
+            $estado, $user['id']
+        ]);
+    }
 
     jsonOk(['mensaje' => 'Charla creada', 'id' => $conexion->lastInsertId()]);
 }

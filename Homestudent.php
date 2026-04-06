@@ -1111,7 +1111,11 @@ let _charlaActual = null;
 
 async function checkCharlaLive() {
   try {
-    const r = await fetch('Php/charla.php', { credentials: 'include' });
+    const token = localStorage.getItem('cv_token') || '';
+    const r = await fetch('/Php/charla.php', {
+      credentials: 'include',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });
     const j = await r.json();
     if (!j.ok) return;
     const { proxima, historial } = j.data;

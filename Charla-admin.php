@@ -460,8 +460,12 @@ async function init() {
     }
 
     // 2. Cargar charlas — filtrar por curso si aplica
+    const token = localStorage.getItem('cv_token') || '';
     const apiUrl = CURSO_ID ? `${API}?curso_id=${CURSO_ID}` : API;
-    const res  = await fetch(apiUrl, { credentials:'include' });
+    const res  = await fetch(apiUrl, {
+      credentials: 'include',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });
     const json = await res.json();
     if (!json.ok) { showErr('Error: '+json.error); return; }
 
@@ -472,7 +476,11 @@ async function init() {
 
     // Cargar todas las sesiones del curso
     try {
-      const hr = await fetch(API+'?historial=1' + (CURSO_ID ? `&curso_id=${CURSO_ID}` : ''), { credentials:'include' });
+      const token2 = localStorage.getItem('cv_token') || '';
+      const hr = await fetch(API+'?historial=1' + (CURSO_ID ? `&curso_id=${CURSO_ID}` : ''), {
+        credentials: 'include',
+        headers: token2 ? { 'Authorization': 'Bearer ' + token2 } : {}
+      });
       const hj = await hr.json();
       if (hj.ok) allSess = hj.data.sesiones;
     } catch(_) {}
