@@ -293,7 +293,7 @@ async function loadPerfil() {
     document.getElementById('sidebar-footer').textContent  = nombre + ' · Instructor';
     return d;
   } catch(e) {
-    window.location.href = '/login';
+    window.location.href = '/loginhome';
     return null;
   }
 }
@@ -466,7 +466,7 @@ document.getElementById('btn-logout').addEventListener('click', async () => {
   localStorage.removeItem('cv_token');
   localStorage.removeItem('cv_user');
   document.cookie = 'cv_token=;expires=Thu,01 Jan 1970 00:00:00 GMT;path=/';
-  window.location.href = '/login';
+  window.location.href = '/loginhome';
 });
 
 // ══════════════════════════════════════════════

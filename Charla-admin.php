@@ -225,9 +225,9 @@
 <!-- ── TOPNAV ─────────────────────────────────────────────────── -->
 <nav class="topnav">
   <div class="topnav-left">
-    <a href="/Admin.php" class="back-btn">
+    <a href="/Admin.php" class="back-btn" id="back-btn-main">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Admin
+      Volver
     </a>
     <span class="nav-label">Panel <span class="sep">/</span> <strong>Charlas en Vivo</strong></span>
   </div>
@@ -433,6 +433,32 @@ let hmsRoomData = null;
 //  INIT
 // ──────────────────────────────────────────────
 async function init() {
+  // ── Ajustar botón de retroceso según rol del usuario ──────
+  try {
+    const token = localStorage.getItem('cv_token') || '';
+    const rp = await fetch('/Php/perfil.php', {
+      credentials: 'include',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });
+    const jp = await rp.json();
+    if (jp.ok) {
+      const rol = (jp.data.rol || '').toLowerCase();
+      const backBtn = document.getElementById('back-btn-main');
+      if (backBtn) {
+        if (rol === 'instructor') {
+          backBtn.href = '/Instructor.php';
+        } else if (rol === 'admin') {
+          backBtn.href = '/Admin.php';
+        }
+      }
+      // Actualizar label del nav
+      const adminPill = document.querySelector('.admin-pill');
+      if (adminPill && rol === 'instructor') {
+        adminPill.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Instructor`;
+      }
+    }
+  } catch(_) {}
+
   try {
     // 1. Resolver curso desde slug
     if (CURSO_SLUG) {

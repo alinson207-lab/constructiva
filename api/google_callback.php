@@ -15,19 +15,19 @@ $sessionState = $_SESSION['oauth_state'] ?? '';
 
 if (!$state || $state !== $sessionState) {
     error_log('[Google OAuth] State mismatch. GET state=' . $state . ' SESSION state=' . $sessionState);
-    die('<script>alert("Error de seguridad OAuth (state mismatch)"); window.location="/loginhome.php";</script>');
+    die('<script>alert("Error de seguridad OAuth (state mismatch)"); window.location="/loginhome";</script>');
 }
 unset($_SESSION['oauth_state']);
 
 // ── VERIFICAR que no hubo error ───────────────────────────────
 if (isset($_GET['error'])) {
     $err = htmlspecialchars($_GET['error']);
-    die("<script>alert('Google rechazó el acceso: $err'); window.location='/loginhome.php';</script>");
+    die("<script>alert('Google rechazó el acceso: $err'); window.location='/loginhome';</script>");
 }
 
 $code = $_GET['code'] ?? '';
 if (!$code) {
-    die('<script>alert("Código de autorización no recibido"); window.location="/loginhome.php";</script>');
+    die('<script>alert("Código de autorización no recibido"); window.location="/loginhome";</script>');
 }
 
 // ── INTERCAMBIAR code por access_token ───────────────────────
@@ -41,7 +41,7 @@ $tokenResponse = httpPost('https://oauth2.googleapis.com/token', [
 
 if (!isset($tokenResponse['access_token'])) {
     error_log('Google token error: ' . json_encode($tokenResponse));
-    die('<script>alert("Error al obtener token de Google"); window.location="/loginhome.php";</script>');
+    die('<script>alert("Error al obtener token de Google"); window.location="/loginhome";</script>');
 }
 
 // ── OBTENER DATOS DEL USUARIO ─────────────────────────────────
@@ -51,7 +51,7 @@ $googleUser = httpGet(
 );
 
 if (empty($googleUser['email'])) {
-    die('<script>alert("No se pudo obtener el email de Google"); window.location="/loginhome.php";</script>');
+    die('<script>alert("No se pudo obtener el email de Google"); window.location="/loginhome";</script>');
 }
 
 $googleId = $googleUser['id'];
@@ -61,7 +61,7 @@ $apellido = $googleUser['family_name'] ?? (explode(' ', $googleUser['name'] ?? '
 
 // ── BUSCAR O CREAR USUARIO ────────────────────────────────────
 if (!$conexion) {
-    die('<script>alert("Error de conexión a la base de datos"); window.location="/loginhome.php";</script>');
+    die('<script>alert("Error de conexión a la base de datos"); window.location="/loginhome";</script>');
 }
 
 // Primero intentar por google_id (si la columna existe)
@@ -85,7 +85,7 @@ if (!$usuario) {
 
     if ($usuario) {
         if ($usuario['activo'] != 1) {
-            die('<script>alert("Tu cuenta está desactivada. Contacta al administrador."); window.location="../loginhome.php";</script>');
+            die('<script>alert("Tu cuenta está desactivada. Contacta al administrador."); window.location="/loginhome";</script>');
         }
         // Vincular google_id al usuario existente
         if ($tieneGoogleId && empty($usuario['google_id'])) {

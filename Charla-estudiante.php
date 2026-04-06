@@ -294,7 +294,7 @@
 // ──────────────────────────────────────────────
 //  CONFIG
 // ──────────────────────────────────────────────
-const API      = 'Php/charla.php';
+const API      = '/Php/charla.php';
 const API_100MS = '/Php/100ms_room.php';
 
 const PI = { zoom:'📹', meet:'🎦', teams:'💼', webex:'🔵', otro:'🌐', '100ms':'📡' };
@@ -309,7 +309,11 @@ let link = null, timer = null;
 // ──────────────────────────────────────────────
 async function init() {
   try {
-    const r = await fetch(API, { credentials:'include' });
+    const token = localStorage.getItem('cv_token') || '';
+    const r = await fetch(API, {
+      credentials: 'include',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });
     const j = await r.json();
     if (!j.ok) { showErr(); return; }
     currentCharla = j.data.proxima;

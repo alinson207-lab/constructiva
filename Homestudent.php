@@ -749,7 +749,7 @@ async function loadPerfil() {
     document.getElementById('p-stat-certs').textContent = d.certificados ?? '0';
   } catch(e) {
     if (e.message === 'No autenticado' || e.message === 'Sesión inválida o expirada') {
-      window.location.href = '/login';
+      window.location.href = '/loginhome';
     }
   }
 }
@@ -1006,7 +1006,9 @@ async function cambiarPassword() {
 // ═══════════════════════════════════════════════
 document.getElementById('btn-logout').addEventListener('click', () => {
   document.cookie = 'cv_token=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
-  window.location.href = '/login';
+  localStorage.removeItem('cv_token');
+  localStorage.removeItem('cv_user');
+  window.location.href = '/loginhome';
 });
 
 // ═══════════════════════════════════════════════
